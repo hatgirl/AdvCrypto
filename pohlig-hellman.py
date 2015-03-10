@@ -75,7 +75,7 @@ def pohligHellman ( G, n, alpha, beta):
         
         print "Prime power " + str( prime ) + "^" + str( power )
         coeffs = pohligHellmanSub ( G, n, alpha, beta, prime, power )
-        
+        print coeffs
         for i in range(len(coeffs)):
             congruences[prime**power] += coeffs[i]*prime**i 
     return CRT(congruences)

@@ -5,14 +5,19 @@
 # date - 3/8/15
 # For Advanced Cryptography at RIT with Professor Radziszowski
 #
-# Polynomials are represented by arrays
-# Index i of the polynomial array represents the coefficient of x^i
+# Polynomials are represented by lists
+# Index i of the polynomial list represents the coefficient of x^i
 
 from math import sqrt
 
 
-# modPolyMultPrecomp calculates some useful congruences for multiplication mod
+# modPolyMultPrecomp is a precomputation step for polynomial ops in a field.
+# It calculates some useful congruences for multiplication mod
 # a polynomial. Use if performing several multiplications within the same field
+# If we're working mod a polynomial of degree k, it will calculate what
+# x^k is equivalent to, as well as
+# x^{k+1}, x^{k+2}, ... x^{2k-2}.
+# It returns these polynomials as lists in a 2-D list. 
 def modPolyMultPrecomp (p, m):
     n = len(p) - 1
     #define n equivalences between polynomial with degree deg(p) <= k <= 2deg(p)
@@ -27,17 +32,22 @@ def modPolyMultPrecomp (p, m):
     return equivalences 
 
 
-# modPolyMult multiplies two polynomials given as arrays, modulo another
-# polynomial, primitive in Z_m 
+# modPolyMult multiplies two polynomials given as lists, modulo another
+# polynomial, irreducible in Z_m 
 def modPolyMult (f, g, p, m, equivalencies):
     
+    # n is the degree of the polynomial p we are working mod
     n = len(p) - 1
+
+    # since all polynomials in the field are of degree at most n-1
+    # product must be large enough to hold 2*(n-1) + 1 entries
     product = [0 for x in range(2*n - 1)]
+
     #multiply the two polynomials
     for i in range (n):
         for j in range(n):
             product[i+j] = (product[i+j] + f[i]*g[j]) % m
-    #reduce mod p            
+    #reduce mod p using precomputed equivalencies
     for i in range(n,2*n - 1):
         equiv = equivalencies[i - (n)]       
         for j in range(len(equiv)):            
