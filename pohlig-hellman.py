@@ -1,5 +1,9 @@
+from math import floor
+
+# returns a dictionary of prime factors as indices and the number of their
+# appearances in the factorization as the value
 def primeFactors(n):
-    """Returns all the prime factors of a positive integer"""
+   
     factors = {}
     d = 2
     while n > 1:
@@ -13,19 +17,23 @@ def primeFactors(n):
         d = d + 1
     return factors
 
-def egcd(a, b):
+# the extended euclidian algorithm
+def euclidian(a, b):
     if a == 0:
         return (b, 0, 1)
     else:
-        g, y, x = egcd(b % a, a)
-        return (g, x - (b // a) * y, y)
+        g, y, x = euclidian(b % a, a)
+        return (g, x - floor(b / a) * y, y)
 
-def modinv(a, m):
-    g, x, y = egcd(a, m)
+
+# returns the inverse of a mod m
+def modInv(a, m):
+    g, x, y = euclidian(a, m)
     if g != 1:
         raise Exception('modular inverse does not exist')
     else:
         return x % m
+
 
 # Apply the Chinese Remainder theorem to a dictionary of congruences
 # Congruences is a dictionary of congruences under various moduli
@@ -38,7 +46,7 @@ def CRT( congruences ):
         nextTerm = congruences[cong1]
         for cong2 in congruences:
             if cong1 != cong2:
-                 nextTerm *= cong2*modinv(cong2,cong1)
+                 nextTerm *= cong2*modInv(cong2,cong1)
         modSum += nextTerm
     return (modSum % modulus)
         
