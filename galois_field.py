@@ -63,7 +63,8 @@ def isIdentity (f):
             if (f[i] != 0):
                 identityFlag = False
     return identityFlag
-        
+
+
 
 #Calculations for question 3 on hw3
 
@@ -73,32 +74,56 @@ def isIdentity (f):
 modP = [1, 0, 1]
 equivs = modPolyMultPrecomp (modP, 131)
 
-Calculate the order of every dang ol element in the field
-orderlist = []
-for i in range(1,131):
+#Calculate the order of every element in the field (with an x term)
+fieldorders = open("orderfile", "w")
+for i in range(1, 131):
     for j in range(131):
         f = [j, i, 0]
         order = 1
         g = f
-        while (isIdentity(g) != True):
+        while (isIdentity(g) != True) :
             g = modPolyMult(f, g, modP, 131, equivs)
             order += 1
-        if (order == 17160):
-           print ( "$" + str(f[1]) + "x + " + str(f[0]) + "$ is a generator! \\\\" )
+        #if (order == 17160):
+        #   print ( "$" + str(f[1]) + "x + " + str(f[0]) + "$ is a generator! \\\\" )
         orderlist.append(order)
-
-
-#Determine how many elements of each order there are
-unique = set()
-for order in orderlist:
-    unique.add(order)
-
-for order in unique:
-    count = orderlist.count(order)
-    print "There are " + str(count) + " elements of order " + str(order)  
+        fieldorders.write(str(order) + " ")
+        if (17160 % order != 0):
+            print "Element order does not divide group order"
+fieldorders.close()
 
 
 
+#open files of orders for field elements
+#fieldorders contains the orders of elements with x terms
+#grouporders contains the orders of the constant elements
+#orderoutput is the result of Q1's OCaml code
+
+fieldorders = open("orderfile", "r")
+grouporders = open("orderoutput.txt", "r")
+orders = []
+
+for line in grouporders:
+    orders = orders + line.split()
+
+for line in fieldorders:
+    orders = orders + line.split()
+    
+unique_orders = set()
+
+for order in orders:
+    unique_orders.add(order)
+
+sortedorders = []
+for order in unique_orders:
+    sortedorders.append(int(order))
+
+sortedorders.sort()
+for order in sortedorders: 
+    print ("There are " + str(orders.count(str(order))) + " element(s) of order " + \
+           str(order) + ".\\\\")
+
+        
 
 #Shanks for polynomials
 def shanks(n, alpha, beta, p, m):
@@ -124,8 +149,5 @@ def shanks(n, alpha, beta, p, m):
     return logResult
 
 print (shanks( 17160, [3, 1, 0], [101, 1, 0], [1, 0, 1], 131))
-
-
-        
 
 
